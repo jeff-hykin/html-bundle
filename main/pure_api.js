@@ -4,7 +4,7 @@ import html from "https://github.com/jeff-hykin/common_tree_sitter_languages/raw
 import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts"
 const htmlParser = await parserFromWasm(html)
 
-export async function convert({htmlFileContents, askForFileContents}) {
+export async function inject({htmlFileContents, askForFileContents}) {
     // 
     // grab start & end (use tree sitter because DOMParser can't do it)
     // 

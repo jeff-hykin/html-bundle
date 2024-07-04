@@ -1,8 +1,8 @@
 import { FileSystem } from 'https://deno.land/x/quickr@0.6.67/main/file_system.js' 
-import { convert } from "../main/pure_api.js"
+import { inject } from "../main/pure_api.js"
 
 
-console.log(await convert({
+console.log(await inject({
     askForFileContents:(path)=>"Yo",
     htmlFileContents: `<!DOCTYPE html>
         <html lang="en">

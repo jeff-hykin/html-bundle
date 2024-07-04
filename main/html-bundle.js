@@ -65,7 +65,6 @@ import { version } from "./version.js"
         autoThrow: true,
     })
     
-    console.debug(`output is:`,output)
     const { inplace } = output.simplifiedNames
     let source = output.argList[0]
     let destination = output.argList[1]
@@ -74,8 +73,6 @@ import { version } from "./version.js"
 // main logic
 // 
 // 
-    console.debug(`source is:`,source)
-    console.debug(`destination is:`,destination)
     if (inplace) {
         destination = source
     } else {

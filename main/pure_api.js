@@ -29,6 +29,7 @@ export async function inject({htmlFileContents, askForFileContents}) {
         "text/html",
     )
     var links = [...document.querySelectorAll("link")]
+    let promises = []
     for (const link of links) {
         const href = link.getAttribute("href")
         if (href && link.getAttribute("rel") === "stylesheet") {
@@ -39,12 +40,15 @@ export async function inject({htmlFileContents, askForFileContents}) {
                     styleElement.setAttribute(eachName, link.getAttribute(eachName))
                 }
             }
-            const cssFileContents = (await askForFileContents(href))
-            // you'd think DOMParser would escape it. You'd be wrong
-            // also: escaping is more of a hack than a real escape. It happens to always work, but its more of a seperate feature of unicode escape sequences than a way to prevent <style>a::before { content: "</style>" }</style> from breaking HTML parsing
-            styleElement.innerHTML = cssFileContents.replace(/<\/style>/g, "\\003C/style>")
-            // swap'em
-            link.replaceWith(styleElement)
+            promises.push(
+                Promise.resolve(askForFileContents(href)).then(cssFileContents=>{
+                    // you'd think DOMParser would escape it. You'd be wrong
+                    // also: escaping is more of a hack than a real escape. It happens to always work, but its more of a seperate feature of unicode escape sequences than a way to prevent <style>a::before { content: "</style>" }</style> from breaking HTML parsing
+                    styleElement.innerHTML = cssFileContents.replace(/<\/style>/g, "\\003C/style>")
+                    // swap'em
+                    link.replaceWith(styleElement)
+                })
+            )
         }
     }
     var scripts = [...document.querySelectorAll("script")]
@@ -52,10 +56,14 @@ export async function inject({htmlFileContents, askForFileContents}) {
         const src = script.getAttribute("src")
         if (src) {
             script.removeAttribute("src")
-            const jsCode = await askForFileContents(src)
-            script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
+            promises.push(
+                Promise.resolve(askForFileContents(src)).then(jsCode=>{
+                    script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
+                })
+            )
         }
     }
+    await Promise.all(promises)
     // NOTE: even if a script tag is past the body closing tag (ex: </body><script></script>) it will end up inside the body when doing document.body.outerHTML
     return `${htmlStart}${document.head.outerHTML}\n${document.body.outerHTML}${htmlEnd}`
 }

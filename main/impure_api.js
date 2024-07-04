@@ -16,7 +16,10 @@ export const pureFill = async (path)=>{
     })
 }
 
-export const fill = async (path, newPath)=>{
-    const newHtmlFileContents = await pureFill(path)
+export const fill = async ({indexHtmlPath, newPath})=>{
+    if (!newPath) {
+        throw new Error("missing newPath argument when calling fill from html-bundle")
+    }
+    const newHtmlFileContents = await pureFill(indexHtmlPath)
     return FileSystem.write({ data: newHtmlFileContents, path: newPath })
 }

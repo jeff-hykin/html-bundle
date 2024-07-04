@@ -7,7 +7,7 @@ Properly converting html, css, and js files to a single html file.
 In Deno:
 
 ```js
-import { fill } from "https://deno.land/x/html_bundle@0.0.1.0/main/impure_api.js"
+import { fill } from "https://deno.land/x/html_bundle@0.0.1.1/main/impure_api.js"
 
 await fill({
     indexHtmlPath: "../test_content/test1/index.html",
@@ -17,7 +17,7 @@ await fill({
 
 On the web: 
 ```js
-import { inject } from "https://deno.land/x/html_bundle@0.0.1.0/main/pure_api.js"
+import { inject } from "https://deno.land/x/html_bundle@0.0.1.1/main/pure_api.js"
 
 console.log(await inject({
     askForFileContents:(path)=>(({

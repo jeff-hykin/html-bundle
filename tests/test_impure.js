@@ -3,5 +3,5 @@ import { fill } from "../main/impure_api.js"
 
 await fill({
     indexHtmlPath: "../test_content/test1/index.html",
-    newPath: "../logs/test1.html"
+    newPath: "../logs/test1.ignore.html"
 })

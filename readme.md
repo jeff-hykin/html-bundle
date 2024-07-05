@@ -4,10 +4,38 @@ Properly converting html, css, and js files to a single html file.
 
 # How do I use it?
 
-In Deno:
+### Command Line
+
+Install
+
+```shell
+# isntall deno
+curl -fsSL https://deno.land/install.sh | sh
+# install html-bundle
+deno install -Afg https://deno.land/x/html_bundle/main/html-bundle.js
+```
+
+Usage:
+```sh
+# non-destructive, creates file1.esm.js, look for "CHECKME" comments
+html-bundle --help
+html-bundle --version
+
+# simple
+html-bundle index.html index.bundled.html
+html-bundle -- index.html index.bundled.html
+
+# auto
+html-bundle index.html
+
+# destructive (overwrites index.html)
+html-bundle --inplace index.html
+```
+
+### In Deno
 
 ```js
-import { fill } from "https://deno.land/x/html_bundle@0.0.1.1/main/impure_api.js"
+import { fill } from "https://deno.land/x/html_bundle@0.0.1.2/main/impure_api.js"
 
 await fill({
     indexHtmlPath: "../test_content/test1/index.html",
@@ -15,9 +43,10 @@ await fill({
 })
 ```
 
-On the web: 
+### On the Web
+
 ```js
-import { inject } from "https://deno.land/x/html_bundle@0.0.1.1/main/pure_api.js"
+import { inject } from "https://deno.land/x/html_bundle@0.0.1.2/main/pure_api.js"
 
 console.log(await inject({
     askForFileContents:(path)=>(({

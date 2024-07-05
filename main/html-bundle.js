@@ -35,7 +35,7 @@ import { version } from "./version.js"
             html-bundle index.html
 
             # destructive (overwrites index.html)
-            to-esm --inplace index.html
+            html-bundle --inplace index.html
         `)
         Deno.exit(0)
     }

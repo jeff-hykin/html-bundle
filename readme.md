@@ -1,6 +1,6 @@
 # What is this for?
 
-HTML bundling that is hacky regex (*cough cough* unlike [vite-singlefile](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28). Using the tree sitter parser and JS DOM, this tool properly escapes and bundlea all the direct css and js dependencies of an HTML file into one giant HTML file.
+HTML bundling that is hacky regex (*cough cough* unlike [vite-singlefile](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28)). Using the tree sitter parser and JS DOM, this tool properly escapes and bundlea all the direct css and js dependencies of an HTML file into one giant HTML file.
 
 # How do I use it?
 

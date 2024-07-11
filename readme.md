@@ -17,16 +17,15 @@ deno install -Afg https://deno.land/x/html_bundle/main/html-bundle.js
 
 Usage:
 ```sh
-# non-destructive, creates file1.esm.js, look for "CHECKME" comments
 html-bundle --help
 html-bundle --version
+
+# auto (creates index.bundled.html
+html-bundle index.html
 
 # simple
 html-bundle index.html index.bundled.html
 html-bundle -- index.html index.bundled.html
-
-# auto
-html-bundle index.html
 
 # destructive (overwrites index.html)
 html-bundle --inplace index.html

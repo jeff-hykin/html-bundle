@@ -1,6 +1,6 @@
 # What is this for?
 
-Properly converting html, css, and js files to a single html file.
+Unlike other tools (such as vite-singlefile) which are just regex [find-and-replace hacks](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28) this tool will properly bundle all the direct css and js dependencies of an HTML file into one giant HTML file. This is thanks to both the tree sitter parser and JS Dom.
 
 # How do I use it?
 

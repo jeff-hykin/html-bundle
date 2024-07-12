@@ -20,7 +20,8 @@ Usage:
 html-bundle --help
 html-bundle --version
 
-# auto (creates index.bundled.html
+# auto
+# (creates index.bundled.html)
 html-bundle index.html
 
 # simple

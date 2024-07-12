@@ -4,7 +4,9 @@ Reliable simple HTML bundling (NOT a regex hack like [other HTML single-file bun
 
 # How do I use it?
 
-### Command Line
+Theres three ways you can use this library.
+
+### 1. Command Line
 
 Install
 
@@ -32,7 +34,7 @@ html-bundle -- index.html index.bundled.html
 html-bundle --inplace index.html
 ```
 
-### In Deno
+### 2. In Deno
 
 ```js
 import { fill } from "https://deno.land/x/html_bundle@0.0.1.2/main/impure_api.js"
@@ -43,7 +45,7 @@ await fill({
 })
 ```
 
-### On the Web
+### 3. On the Web
 
 ```js
 import { inject } from "https://deno.land/x/html_bundle@0.0.1.2/main/pure_api.js"

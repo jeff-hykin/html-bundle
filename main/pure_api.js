@@ -4,6 +4,46 @@ import html from "https://github.com/jeff-hykin/common_tree_sitter_languages/raw
 import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts"
 const htmlParser = await parserFromWasm(html)
 
+/**
+ * Injects HTML content into a document by replacing script and style tags with their corresponding file contents.
+ *
+ * @example
+ * ```js
+ * inject({
+ *      askForFileContents: (pathBeingImported)=>{
+ *          if (pathBeingImported.startsWith("https://")) {
+ *              return fetch(pathBeingImported).then(each=>each.text())
+ *          } else {
+ *              return fs.readFileSync(pathBeingImported)
+ *          }
+ *      },
+ *      htmlFileContents: `
+ *          <!DOCTYPE html>
+ *          <html lang="en">
+ *              <head>
+ *                  <meta charset="UTF-8">
+ *                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ *                  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+ *                  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+ *                  <title>Vry Cool Website</title>
+ *              <link rel="stylesheet" href="main.css"></head>
+ *              <body>
+ *                  <div id="vue-root">
+ *                  </div>
+ *                  <script src="index.js"></script>
+ *              </body>
+ *              <script src="something.js"></script>
+ *              <!-- I don't get deleted  -->
+ *          </html>
+ *          <!-- neither do I -->
+ *      `,
+ *  })
+ * ```
+ * @param {object} args - 
+ * @param {string} args.htmlFileContents - The HTML file contents to be processed.
+ * @param {function} args.askForFileContents - takes 1 string arg (relative path, ex: the src in a <script> tag) returns a string (file contents)
+ * @returns {string} The updated HTML content with script and style tags replaced.
+ */
 export async function inject({htmlFileContents, askForFileContents}) {
     // 
     // grab start & end (use tree sitter because DOMParser can't do it)

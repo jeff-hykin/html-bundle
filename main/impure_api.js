@@ -8,7 +8,7 @@ import { FileSystem, glob } from "https://deno.land/x/quickr@0.6.67/main/file_sy
  * @returns {string} - An object containing the injected HTML file contents and a function to fetch the contents of other files referenced in the HTML.
  * @throws {Error} - If the HTML file cannot be found at the specified path.
  */
-export function pureFill(path) {
+export async function pureFill(path) {
     const htmlFileContents = await FileSystem.read(path)
     if (!htmlFileContents) {
         throw new Error(`When calling html-bundle pureFill, I could not find file at path ${JSON.stringify(path)}`)

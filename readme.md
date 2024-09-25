@@ -37,7 +37,7 @@ html-bundle --inplace index.html
 ### 2. In Deno
 
 ```js
-import { fill } from "https://deno.land/x/html_bundle@0.0.1.4/main/impure_api.js"
+import { fill } from "https://deno.land/x/html_bundle@0.0.1.5/main/impure_api.js"
 
 await fill({
     indexHtmlPath: "../test_content/test1/index.html",
@@ -48,7 +48,7 @@ await fill({
 ### 3. On the Web
 
 ```js
-import { inject } from "https://deno.land/x/html_bundle@0.0.1.4/main/pure_api.js"
+import { inject } from "https://deno.land/x/html_bundle@0.0.1.5/main/pure_api.js"
 
 console.log(await inject({
     askForFileContents:(path)=>(({

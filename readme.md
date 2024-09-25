@@ -1,10 +1,12 @@
-# What is this for?
+# What is this?
 
-Properly converting html, css, and js files to a single html file.
+Reliable simple HTML bundling (NOT a regex hack like [other HTML single-file bundlers](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28)). This uses the deno tree sitter parser and JS DOM, to tool escape and bundle all direct css and js dependencies of an HTML file into one giant HTML file including http stylesheets and script tags.
 
 # How do I use it?
 
-### Command Line
+Theres three ways you can use this library.
+
+### 1. Command Line
 
 Install
 
@@ -17,22 +19,22 @@ deno install -Afg https://deno.land/x/html_bundle/main/html-bundle.js
 
 Usage:
 ```sh
-# non-destructive, creates file1.esm.js, look for "CHECKME" comments
 html-bundle --help
 html-bundle --version
+
+# auto
+# (creates index.bundled.html)
+html-bundle index.html
 
 # simple
 html-bundle index.html index.bundled.html
 html-bundle -- index.html index.bundled.html
 
-# auto
-html-bundle index.html
-
 # destructive (overwrites index.html)
 html-bundle --inplace index.html
 ```
 
-### In Deno
+### 2. In Deno
 
 ```js
 import { fill } from "https://deno.land/x/html_bundle@0.0.1.2/main/impure_api.js"
@@ -43,7 +45,7 @@ await fill({
 })
 ```
 
-### On the Web
+### 3. On the Web
 
 ```js
 import { inject } from "https://deno.land/x/html_bundle@0.0.1.2/main/pure_api.js"

@@ -3,6 +3,9 @@ import { FileSystem, glob } from "https://deno.land/x/quickr@0.6.67/main/file_sy
 
 export const pureFill = async (path)=>{
     const htmlFileContents = await FileSystem.read(path)
+    if (!htmlFileContents) {
+        throw new Error(`When calling html-bundle pureFill, I could not find file at path ${JSON.stringify(path)}`)
+    }
     const parentPath = FileSystem.parentPath(path)
     return inject({
         htmlFileContents,

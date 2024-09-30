@@ -17,7 +17,7 @@ export async function pureFill(path) {
     return inject({
         htmlFileContents,
         askForFileContents: (eachPath)=>{
-            if (eachPath.startsWith("https://")) {
+            if (eachPath.startsWith("https://") || eachPath.startsWith("http://")) {
                 return fetch(eachPath).then(each=>each.text())
             } else {
                 return FileSystem.read(`${parentPath}/${eachPath}`)

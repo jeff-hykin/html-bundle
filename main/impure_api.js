@@ -20,6 +20,7 @@ export async function pureFill(path) {
             if (eachPath.startsWith("https://") || eachPath.startsWith("http://")) {
                 return fetch(eachPath).then(each=>each.text())
             } else {
+                // NOTE: may need to decodeURI on this to get correct path
                 return FileSystem.read(`${parentPath}/${eachPath}`)
             }
         }

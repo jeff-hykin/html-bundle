@@ -16,12 +16,26 @@ export async function pureFill(path, options={}) {
     const parentPath = FileSystem.parentPath(path)
     return inject({
         htmlFileContents,
-        askForFileContents: (eachPath)=>{
+        askForFileContents: async (eachPath, kind)=>{
             if (eachPath.startsWith("https://") || eachPath.startsWith("http://")) {
-                return fetch(eachPath).then(each=>each.text())
+                if (kind === "img") {
+                    return fetch(eachPath).then(each=>each.arrayBuffer())
+                } else {
+                    return fetch(eachPath).then(each=>each.text())
+                }
             } else {
-                // NOTE: may need to decodeURI on this to get correct path
-                return FileSystem.read(`${parentPath}/${eachPath}`)
+                // TODO: may need to decodeURI on this to get correct path
+                const fullPath = `${parentPath}/${eachPath}`
+                let contents
+                if (kind === "img") {
+                    contents = await FileSystem.readBytes(fullPath)
+                } else {
+                    contents = await FileSystem.read(fullPath)
+                }
+                if (contents == null) {
+                    throw new Error(`Could not find file at path ${JSON.stringify(eachPath)}`)
+                }
+                return contents
             }
         },
         ...options,

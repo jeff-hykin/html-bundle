@@ -42,10 +42,10 @@ const htmlParser = await parserFromWasm(html)
  * @param {object} args - 
  * @param {string} args.htmlFileContents - The HTML file contents to be processed.
  * @param {function} args.askForFileContents - takes 1 string arg (relative path, ex: the src in a <script> tag) returns a string (file contents)
- * @param {string} args.onReadFileIssue - "warn", "throw" or "ignore", default is "warn"
+ * @param {string} args.ifBadPath - "warn", "throw" or "ignore", default is "warn"
  * @returns {string} The updated HTML content with script and style tags replaced.
  */
-export async function inject({htmlFileContents, askForFileContents, onReadFileIssue="warn", shouldBundleScripts=true, shouldBundleCss=true,}) {
+export async function inject({htmlFileContents, askForFileContents, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true}) {
     // 
     // grab start & end (use tree sitter because DOMParser can't do it)
     // 
@@ -90,9 +90,9 @@ export async function inject({htmlFileContents, askForFileContents, onReadFileIs
                         // swap'em
                         link.replaceWith(styleElement)
                     }).catch(err=>{
-                        if (onReadFileIssue === "warn") {
+                        if (ifBadPath === "warn") {
                             console.warn(`Warning: could not find/load CSS file at path ${href}, keeping original url\nError Message: ${err}`)
-                        } else if (onReadFileIssue === "ignore") {
+                        } else if (ifBadPath === "ignore") {
                             // do nothing
                         } else {
                             throw err
@@ -112,9 +112,9 @@ export async function inject({htmlFileContents, askForFileContents, onReadFileIs
                     Promise.resolve(askForFileContents(src)).then(jsCode=>{
                         script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
                     }).catch(err=>{
-                        if (onReadFileIssue === "warn") {
+                        if (ifBadPath === "warn") {
                             console.warn(`Warning: for script could not find file for src ${src}, keeping original url\nError Message: ${err}`)
-                        } else if (onReadFileIssue === "ignore") {
+                        } else if (ifBadPath === "ignore") {
                             // do nothing
                         } else {
                             throw err

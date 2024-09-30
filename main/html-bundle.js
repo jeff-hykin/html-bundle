@@ -1,4 +1,4 @@
-import { green, cyan, purple } from "https://deno.land/x/quickr@0.6.72/main/console.js"
+import { green, cyan, magenta, gray } from "https://deno.land/x/quickr@0.6.72/main/console.js"
 import { FileSystem } from "https://deno.land/x/quickr@0.6.72/main/file_system.js"
 import { parseArgs, flag, required, initialValue } from "https://deno.land/x/good@1.7.1.0/flattened/parse_args.js"
 import { toCamelCase } from "https://deno.land/x/good@1.7.1.0/flattened/to_camel_case.js"
@@ -28,24 +28,24 @@ import { version } from "./version.js"
             ${green.blackBackground`html-bundle`} ${cyan`--help`}
             ${green.blackBackground`html-bundle`} ${cyan`--version`}
             
-            # simple
+            ${gray.blackBackground`# simple`}
             ${green.blackBackground`html-bundle`} index.html index.bundled.html
             ${green.blackBackground`html-bundle`} ${cyan`--`} index.html index.bundled.html
 
-            # auto
+            ${gray.blackBackground`# auto`}
             ${green.blackBackground`html-bundle`} index.html
 
-            # destructive (overwrites index.html)
+            ${gray.blackBackground`# destructive (overwrites index.html)`}
             ${green.blackBackground`html-bundle`} ${cyan`--inplace`} index.html
 
-            # error behavior
-            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`warn`}   index.html
-            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`ignore`} index.html
-            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`throw`}  index.html
+            ${gray.blackBackground`# error behavior`}
+            ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`warn`}   index.html
+            ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`ignore`} index.html
+            ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`throw`}  index.html
 
-            # select what to bundle
-            ${green.blackBackground`html-bundle`} ${purple`--shouldBundleScripts `+cyan`false`} index.html
-            ${green.blackBackground`html-bundle`} ${purple`--shouldBundleCss `+cyan`false`} index.html
+            ${gray.blackBackground`# select what to bundle`}
+            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleScripts `+cyan`false`} index.html
+            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleCss `+cyan`false`} index.html
         `)
         Deno.exit(0)
     }

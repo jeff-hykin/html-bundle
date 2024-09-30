@@ -61,13 +61,15 @@ export async function pureFill(path, options={}) {
  * @param {string} [arg.ifBadPath="warn"] - The behavior to use when there is an issue reading a file, either "warn" or "throw".
  * @param {boolean} [arg.shouldBundleScripts=true] - Whether to bundle any referenced scripts.
  * @param {boolean} [arg.shouldBundleCss=true] - Whether to bundle any referenced CSS.
+ * @param {boolean} [arg.shouldBundleImages=true] - Whether to bundle any referenced CSS.
+ * @param {function} [args.pathToMimeType=null] - A function that takes a url or file path and returns the MIME type of the file.as a string
  * @returns {Promise<void>} - A promise that resolves when the new HTML file has been written.
  * @throws {Error} - If the `newPath` argument is missing, or (depending on ifBadPath) if the file cannot be read.
  */
-export const fill = async ({indexHtmlPath, newPath, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true})=>{
+export const fill = async ({indexHtmlPath, newPath, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true, shouldBundleImages=true, pathToMimeType=null})=>{
     if (!newPath) {
         throw new Error("missing newPath argument when calling fill from html-bundle")
     }
-    const newHtmlFileContents = await pureFill(indexHtmlPath, {ifBadPath, shouldBundleScripts, shouldBundleCss})
+    const newHtmlFileContents = await pureFill(indexHtmlPath, {ifBadPath, shouldBundleScripts, shouldBundleCss, shouldBundleImages, pathToMimeType})
     return FileSystem.write({ data: newHtmlFileContents, path: newPath })
 }

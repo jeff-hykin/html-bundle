@@ -1,0 +1,7 @@
+(good) error is: Error: Could not find file at path "doesNotExist.js"
+    at askForFileContents (file://$PROJECT_ROOT/main/impure_api.js:36:27)
+    at eventLoopTick (ext:core/01_core.js:168:7)
+    at async Promise.all (index 2)
+    at async inject (file://$PROJECT_ROOT/main/pure_api.js:144:5)
+    at async fill (file://$PROJECT_ROOT/main/impure_api.js:70:33)
+    at async file://$PROJECT_ROOT/tests/test_impure_errors.js:5:5

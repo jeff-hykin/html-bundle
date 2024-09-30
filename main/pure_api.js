@@ -42,9 +42,10 @@ const htmlParser = await parserFromWasm(html)
  * @param {object} args - 
  * @param {string} args.htmlFileContents - The HTML file contents to be processed.
  * @param {function} args.askForFileContents - takes 1 string arg (relative path, ex: the src in a <script> tag) returns a string (file contents)
+ * @param {string} args.onReadFileIssue - "warn", "throw" or "ignore", default is "warn"
  * @returns {string} The updated HTML content with script and style tags replaced.
  */
-export async function inject({htmlFileContents, askForFileContents}) {
+export async function inject({htmlFileContents, askForFileContents, onReadFileIssue="warn", shouldBundleScripts=true, shouldBundleCss=true,}) {
     // 
     // grab start & end (use tree sitter because DOMParser can't do it)
     // 
@@ -68,39 +69,59 @@ export async function inject({htmlFileContents, askForFileContents}) {
         htmlFileContents,
         "text/html",
     )
-    var links = [...document.querySelectorAll("link")]
     let promises = []
-    for (const link of links) {
-        const href = link.getAttribute("href")
-        if (href && link.getAttribute("rel") === "stylesheet") {
-            const styleElement = document.createElement("style")
-            // transfer all the attributes over
-            for (const eachName of link.getAttributeNames()) {
-                if (eachName != "href" && eachName != "rel") {
-                    styleElement.setAttribute(eachName, link.getAttribute(eachName))
+    if (shouldBundleCss) {
+        var links = [...document.querySelectorAll("link")]
+        for (const link of links) {
+            const href = link.getAttribute("href")
+            if (href && link.getAttribute("rel") === "stylesheet") {
+                const styleElement = document.createElement("style")
+                // transfer all the attributes over
+                for (const eachName of link.getAttributeNames()) {
+                    if (eachName != "href" && eachName != "rel") {
+                        styleElement.setAttribute(eachName, link.getAttribute(eachName))
+                    }
                 }
+                promises.push(
+                    Promise.resolve(askForFileContents(href)).then(cssFileContents=>{
+                        // you'd think DOMParser would escape it. You'd be wrong
+                        // also: escaping is more of a hack than a real escape. It happens to always work, but its more of a seperate feature of unicode escape sequences than a way to prevent <style>a::before { content: "</style>" }</style> from breaking HTML parsing
+                        styleElement.innerHTML = cssFileContents.replace(/<\/style>/g, "\\003C/style>")
+                        // swap'em
+                        link.replaceWith(styleElement)
+                    }).catch(err=>{
+                        if (onReadFileIssue === "warn") {
+                            console.warn(`Warning: could not find/load CSS file at path ${href}, keeping original url\nError Message: ${err}`)
+                        } else if (onReadFileIssue === "ignore") {
+                            // do nothing
+                        } else {
+                            throw err
+                        }
+                    })
+                )
             }
-            promises.push(
-                Promise.resolve(askForFileContents(href)).then(cssFileContents=>{
-                    // you'd think DOMParser would escape it. You'd be wrong
-                    // also: escaping is more of a hack than a real escape. It happens to always work, but its more of a seperate feature of unicode escape sequences than a way to prevent <style>a::before { content: "</style>" }</style> from breaking HTML parsing
-                    styleElement.innerHTML = cssFileContents.replace(/<\/style>/g, "\\003C/style>")
-                    // swap'em
-                    link.replaceWith(styleElement)
-                })
-            )
         }
     }
-    var scripts = [...document.querySelectorAll("script")]
-    for (const script of scripts) {
-        const src = script.getAttribute("src")
-        if (src) {
-            script.removeAttribute("src")
-            promises.push(
-                Promise.resolve(askForFileContents(src)).then(jsCode=>{
-                    script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
-                })
-            )
+    if (shouldBundleScripts) {
+        var scripts = [...document.querySelectorAll("script")]
+        for (const script of scripts) {
+            const src = script.getAttribute("src")
+            if (src) {
+                script.removeAttribute("src")
+                promises.push(
+                    Promise.resolve(askForFileContents(src)).then(jsCode=>{
+                        script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
+                    }).catch(err=>{
+                        if (onReadFileIssue === "warn") {
+                            console.warn(`Warning: for script could not find file for src ${href}, keeping original url\nError Message: ${err}`)
+                        } else if (onReadFileIssue === "ignore") {
+                            // do nothing
+                        } else {
+                            throw err
+                        }
+                    })
+                )
+            }
         }
     }
     await Promise.all(promises)

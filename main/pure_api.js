@@ -44,9 +44,13 @@ const htmlParser = await parserFromWasm(html)
  * @param {string} args.htmlFileContents - The HTML file contents to be processed.
  * @param {function} args.askForFileContents - takes 1 string arg (relative path, ex: the src in a <script> tag) returns a string (file contents)
  * @param {string} args.ifBadPath - "warn", "throw" or "ignore", default is "warn"
+ * @param {boolean} [args.shouldBundleScripts=true] - Whether to bundle script tags.
+ * @param {boolean} [args.shouldBundleCss=true] - Whether to bundle CSS tags.
+ * @param {boolean} [args.shouldBundleImages=true] - Whether to bundle image tags.
+ * @param {function} [args.pathToMimeType=null] - A function that takes a url or file path and returns the MIME type of the file.as a string
  * @returns {string} The updated HTML content with script and style tags replaced.
  */
-export async function inject({htmlFileContents, askForFileContents, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true}) {
+export async function inject({htmlFileContents, askForFileContents, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true, shouldBundleImages=true, pathToMimeType=null}) {
     // 
     // grab start & end (use tree sitter because DOMParser can't do it)
     // 
@@ -112,6 +116,33 @@ export async function inject({htmlFileContents, askForFileContents, ifBadPath="w
                 promises.push(
                     Promise.resolve(askForFileContents(src, "js")).then(jsCode=>{
                         script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
+                    }).catch(err=>{
+                        if (ifBadPath === "warn") {
+                            console.warn(`Warning: for script could not find file for src ${src}, keeping original url\nError Message: ${err}`)
+                        } else if (ifBadPath === "ignore") {
+                            // do nothing
+                        } else {
+                            throw err
+                        }
+                    })
+                )
+            }
+        }
+    }
+    if (shouldBundleImages) {
+        var images = [...document.querySelectorAll("img")]
+        for (const imageElement of images) {
+            const src = imageElement.getAttribute("src")
+            if (src) {
+                const promise = new Promise(async (resolve, reject)=>{
+                    const mimeType = pathToMimeType ? await pathToMimeType(src) : "image"
+                    const fileContents = await askForFileContents(src, "img")
+                    const srcAttribute = uint8ArrayToBase64SrcAttribute(mimeType, fileContents)
+                    resolve(srcAttribute)
+                })
+                promises.push(
+                    promise.then(newSrcAttribute=>{
+                        imageElement.setAttribute("src", newSrcAttribute)
                     }).catch(err=>{
                         if (ifBadPath === "warn") {
                             console.warn(`Warning: for script could not find file for src ${src}, keeping original url\nError Message: ${err}`)

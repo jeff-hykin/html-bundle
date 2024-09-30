@@ -107,3 +107,22 @@ export async function inject({htmlFileContents, askForFileContents}) {
     // NOTE: even if a script tag is past the body closing tag (ex: </body><script></script>) it will end up inside the body when doing document.body.outerHTML
     return `${htmlStart}${document.head.outerHTML}\n${document.body.outerHTML}${htmlEnd}`
 }
+
+/**
+ * Converts a Uint8Array to a base64-encoded data URI string.
+ *
+ * @param {string} mimeType - The MIME type of the data.
+ * @param {Uint8Array} uint8Array - The binary data to be converted.
+ * @returns {string} A base64-encoded data URI string.
+ *
+ * @example
+ *     imgElement.src = uint8ArrayToBase64SrcAttribute("image/png", Deno.readFileSync("./file.png"))
+ */
+export function uint8ArrayToBase64SrcAttribute(mimeType, uint8Array) {
+    // Note: this is done in a for loop because it'll cause a stack overflow for even mid-sized files
+    let binaryString = '';
+    for (let i = 0; i < uint8Array.length; i++) {
+        binaryString += String.fromCharCode(uint8Array[i])
+    }
+    return `data:${mimeType};base64,${btoa(binaryString)}`
+}

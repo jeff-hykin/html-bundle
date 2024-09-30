@@ -141,6 +141,9 @@ export async function inject({htmlFileContents, askForFileContents, ifBadPath="w
  *     imgElement.src = uint8ArrayToBase64SrcAttribute("image/png", Deno.readFileSync("./file.png"))
  */
 export function uint8ArrayToBase64SrcAttribute(mimeType, uint8Array) {
+    if (uint8Array instanceof ArrayBuffer) {
+        uint8Array = new Uint8Array(uint8Array)
+    }
     // Note: this is done in a for loop because it'll cause a stack overflow for even mid-sized files
     let binaryString = '';
     for (let i = 0; i < uint8Array.length; i++) {

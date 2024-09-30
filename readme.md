@@ -1,6 +1,6 @@
 # What is this?
 
-Reliable simple HTML bundling (NOT a regex hack like [other HTML single-file bundlers](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28)). This uses the deno tree sitter parser and JS DOM, to escape and bundle all direct css and js dependencies of an HTML file into one giant HTML file including http stylesheets and script tags.
+Reliable simple HTML bundling (NOT a regex hack like [other HTML single-file bundlers](https://github.com/richardtallent/vite-plugin-singlefile/blob/ae4368c365d5034a9ff4037a71a1046ecf56b132/src/index.ts#L28)). This uses the deno tree sitter parser and JS DOM, to escape and bundle all direct css, js, and image dependencies of an HTML file into one giant HTML file. This includes both local file paths and http/https urls.
 
 # How do I use it?
 
@@ -21,23 +21,32 @@ Usage:
 ```sh
 html-bundle --help
 html-bundle --version
-
-# auto
-# (creates index.bundled.html)
-html-bundle index.html
-
+            
 # simple
 html-bundle index.html index.bundled.html
 html-bundle -- index.html index.bundled.html
 
+# auto
+html-bundle index.html
+
 # destructive (overwrites index.html)
 html-bundle --inplace index.html
+
+# selective bundling
+html-bundle --shouldBundleImages false index.html
+html-bundle --shouldBundleScripts false index.html
+html-bundle --shouldBundleCss false index.html
+
+# error behavior
+html-bundle --ifBadPath warn   index.html
+html-bundle --ifBadPath ignore index.html
+html-bundle --ifBadPath throw  index.html
 ```
 
 ### 2. In Deno
 
 ```js
-import { fill } from "https://deno.land/x/html_bundle@0.0.2.0/main/impure_api.js"
+import { fill } from "https://deno.land/x/html_bundle@0.0.3.0/main/impure_api.js"
 
 await fill({
     indexHtmlPath: "../test_content/test1/index.html",
@@ -48,7 +57,7 @@ await fill({
 ### 3. On the Web
 
 ```js
-import { inject } from "https://deno.land/x/html_bundle@0.0.2.0/main/pure_api.js"
+import { inject } from "https://deno.land/x/html_bundle@0.0.3.0/main/pure_api.js"
 
 console.log(await inject({
     askForFileContents:(path)=>(({

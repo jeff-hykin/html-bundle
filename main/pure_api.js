@@ -10,7 +10,8 @@ const htmlParser = await parserFromWasm(html)
  * @example
  * ```js
  * inject({
- *      askForFileContents: (pathBeingImported)=>{
+ *      askForFileContents: (pathBeingImported, kind)=>{
+ *          // kind is one of [ "js", "css", "img" ]
  *          if (pathBeingImported.startsWith("https://")) {
  *              return fetch(pathBeingImported).then(each=>each.text())
  *          } else {
@@ -83,7 +84,7 @@ export async function inject({htmlFileContents, askForFileContents, ifBadPath="w
                     }
                 }
                 promises.push(
-                    Promise.resolve(askForFileContents(href)).then(cssFileContents=>{
+                    Promise.resolve(askForFileContents(href, "css")).then(cssFileContents=>{
                         // you'd think DOMParser would escape it. You'd be wrong
                         // also: escaping is more of a hack than a real escape. It happens to always work, but its more of a seperate feature of unicode escape sequences than a way to prevent <style>a::before { content: "</style>" }</style> from breaking HTML parsing
                         styleElement.innerHTML = cssFileContents.replace(/<\/style>/g, "\\003C/style>")
@@ -109,7 +110,7 @@ export async function inject({htmlFileContents, askForFileContents, ifBadPath="w
             if (src) {
                 script.removeAttribute("src")
                 promises.push(
-                    Promise.resolve(askForFileContents(src)).then(jsCode=>{
+                    Promise.resolve(askForFileContents(src, "js")).then(jsCode=>{
                         script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
                     }).catch(err=>{
                         if (ifBadPath === "warn") {

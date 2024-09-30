@@ -2,6 +2,6 @@
     at askForFileContents (file://$PROJECT_ROOT/main/impure_api.js:37:27)
     at eventLoopTick (ext:core/01_core.js:168:7)
     at async Promise.all (index 2)
-    at async inject (file://$PROJECT_ROOT/main/pure_api.js:159:5)
-    at async fill (file://$PROJECT_ROOT/main/impure_api.js:71:33)
+    at async inject (file://$PROJECT_ROOT/main/pure_api.js:163:5)
+    at async fill (file://$PROJECT_ROOT/main/impure_api.js:73:33)
     at async file://$PROJECT_ROOT/tests/test_impure_errors.js:5:5

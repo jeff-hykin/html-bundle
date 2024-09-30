@@ -1,4 +1,5 @@
-import { FileSystem } from "https://deno.land/x/quickr@0.6.67/main/file_system.js"
+import { green, cyan, purple } from "https://deno.land/x/quickr@0.6.72/main/console.js"
+import { FileSystem } from "https://deno.land/x/quickr@0.6.72/main/file_system.js"
 import { parseArgs, flag, required, initialValue } from "https://deno.land/x/good@1.7.1.0/flattened/parse_args.js"
 import { toCamelCase } from "https://deno.land/x/good@1.7.1.0/flattened/to_camel_case.js"
 import { didYouMean } from "https://deno.land/x/good@1.7.1.0/flattened/did_you_mean.js"
@@ -24,18 +25,27 @@ import { version } from "./version.js"
         console.log(`
     Html Bundle
         examples:
-            html-bundle --help
-            html-bundle --version
+            ${green.blackBackground`html-bundle`} ${cyan`--help`}
+            ${green.blackBackground`html-bundle`} ${cyan`--version`}
             
             # simple
-            html-bundle index.html index.bundled.html
-            html-bundle -- index.html index.bundled.html
+            ${green.blackBackground`html-bundle`} index.html index.bundled.html
+            ${green.blackBackground`html-bundle`} ${cyan`--`} index.html index.bundled.html
 
             # auto
-            html-bundle index.html
+            ${green.blackBackground`html-bundle`} index.html
 
             # destructive (overwrites index.html)
-            html-bundle --inplace index.html
+            ${green.blackBackground`html-bundle`} ${cyan`--inplace`} index.html
+
+            # error behavior
+            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`warn`}   index.html
+            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`ignore`} index.html
+            ${green.blackBackground`html-bundle`} ${purple`--ifBadPath `+cyan`throw`}  index.html
+
+            # select what to bundle
+            ${green.blackBackground`html-bundle`} ${purple`--shouldBundleScripts `+cyan`false`} index.html
+            ${green.blackBackground`html-bundle`} ${purple`--shouldBundleCss `+cyan`false`} index.html
         `)
         Deno.exit(0)
     }
@@ -49,6 +59,9 @@ import { version } from "./version.js"
             [[ 0 ], required, ],
             [[ 1 ],  ],
             [[ "--inplace", "-i"], flag, ],
+            [[ "--ifBadPath", ], initialValue("warn"), ],
+            [[ "--shouldBundleScripts", ], initialValue(true), ],
+            [[ "--shouldBundleCss", ], initialValue(true), ],
         ],
         nameTransformer: toCamelCase,
         namedArgsStopper: "--",
@@ -65,7 +78,7 @@ import { version } from "./version.js"
         autoThrow: true,
     })
     
-    const { inplace } = output.simplifiedNames
+    const { inplace, shouldBundleScripts, shouldBundleCss, ifBadPath } = output.simplifiedNames
     let source = output.argList[0]
     let destination = output.argList[1]
 // 
@@ -86,4 +99,7 @@ import { version } from "./version.js"
     await fill({
         indexHtmlPath: source,
         newPath: destination,
+        shouldBundleScripts,
+        shouldBundleCss,
+        ifBadPath,
     })

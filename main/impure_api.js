@@ -18,6 +18,7 @@ export async function pureFill(path, options={}) {
         htmlFileContents,
         askForFileContents: async (eachPath, kind)=>{
             if (eachPath.startsWith("https://") || eachPath.startsWith("http://")) {
+                // TODO: check for error response
                 if (kind === "img") {
                     return fetch(eachPath).then(each=>each.arrayBuffer())
                 } else {

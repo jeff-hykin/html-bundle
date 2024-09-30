@@ -1,5 +1,5 @@
 import { inject } from "./pure_api.js"
-import { FileSystem, glob } from "https://deno.land/x/quickr@0.6.67/main/file_system.js"
+import { FileSystem, glob } from "https://deno.land/x/quickr@0.6.72/main/file_system.js"
 
 /**
  * Reads the contents of an HTML file at the specified path, and injects the contents into a bundle using the `inject` function from the `pure_api.js` module.
@@ -8,7 +8,7 @@ import { FileSystem, glob } from "https://deno.land/x/quickr@0.6.67/main/file_sy
  * @returns {string} - An object containing the injected HTML file contents and a function to fetch the contents of other files referenced in the HTML.
  * @throws {Error} - If the HTML file cannot be found at the specified path.
  */
-export async function pureFill(path) {
+export async function pureFill(path, options={}) {
     const htmlFileContents = await FileSystem.read(path)
     if (!htmlFileContents) {
         throw new Error(`When calling html-bundle pureFill, I could not find file at path ${JSON.stringify(path)}`)
@@ -23,7 +23,8 @@ export async function pureFill(path) {
                 // NOTE: may need to decodeURI on this to get correct path
                 return FileSystem.read(`${parentPath}/${eachPath}`)
             }
-        }
+        },
+        ...options,
     })
 }
 
@@ -42,13 +43,16 @@ export async function pureFill(path) {
  * @param {Object} arg - The options object.
  * @param {string} arg.indexHtmlPath - The path to the existing HTML file.
  * @param {string} arg.newPath - The path to the new HTML file.
+ * @param {string} [arg.ifBadPath="warn"] - The behavior to use when there is an issue reading a file, either "warn" or "throw".
+ * @param {boolean} [arg.shouldBundleScripts=true] - Whether to bundle any referenced scripts.
+ * @param {boolean} [arg.shouldBundleCss=true] - Whether to bundle any referenced CSS.
  * @returns {Promise<void>} - A promise that resolves when the new HTML file has been written.
- * @throws {Error} - If the `newPath` argument is missing, or if the file cannot be read
+ * @throws {Error} - If the `newPath` argument is missing, or (depending on ifBadPath) if the file cannot be read.
  */
-export const fill = async ({indexHtmlPath, newPath})=>{
+export const fill = async ({indexHtmlPath, newPath, ifBadPath="warn", shouldBundleScripts=true, shouldBundleCss=true})=>{
     if (!newPath) {
         throw new Error("missing newPath argument when calling fill from html-bundle")
     }
-    const newHtmlFileContents = await pureFill(indexHtmlPath)
+    const newHtmlFileContents = await pureFill(indexHtmlPath, {ifBadPath, shouldBundleScripts, shouldBundleCss})
     return FileSystem.write({ data: newHtmlFileContents, path: newPath })
 }

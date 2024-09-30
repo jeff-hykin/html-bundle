@@ -113,7 +113,7 @@ export async function inject({htmlFileContents, askForFileContents, onReadFileIs
                         script.innerHTML = jsCode.replace(/<\/script>/g, "<\\/script>")
                     }).catch(err=>{
                         if (onReadFileIssue === "warn") {
-                            console.warn(`Warning: for script could not find file for src ${href}, keeping original url\nError Message: ${err}`)
+                            console.warn(`Warning: for script could not find file for src ${src}, keeping original url\nError Message: ${err}`)
                         } else if (onReadFileIssue === "ignore") {
                             // do nothing
                         } else {

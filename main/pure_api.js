@@ -13,7 +13,11 @@ const htmlParser = await parserFromWasm(html)
  *      askForFileContents: (pathBeingImported, kind)=>{
  *          // kind is one of [ "js", "css", "img" ]
  *          if (pathBeingImported.startsWith("https://")) {
- *              return fetch(pathBeingImported).then(each=>each.text())
+ *              if (kind === "img") {
+ *                 return fetch(pathBeingImported).then(each=>each.arrayBuffer())
+ *              } else {
+ *                 return fetch(pathBeingImported).then(each=>each.text())
+ *              }
  *          } else {
  *              return fs.readFileSync(pathBeingImported)
  *          }
@@ -44,9 +48,9 @@ const htmlParser = await parserFromWasm(html)
  * @param {string} args.htmlFileContents - The HTML file contents to be processed.
  * @param {function} args.askForFileContents - takes 1 string arg (relative path, ex: the src in a <script> tag) returns a string (file contents)
  * @param {string} args.ifBadPath - "warn", "throw" or "ignore", default is "warn"
+ * @param {boolean} [args.shouldBundleImages=true] - Whether to bundle image tags.
  * @param {boolean} [args.shouldBundleScripts=true] - Whether to bundle script tags.
  * @param {boolean} [args.shouldBundleCss=true] - Whether to bundle CSS tags.
- * @param {boolean} [args.shouldBundleImages=true] - Whether to bundle image tags.
  * @param {function} [args.pathToMimeType=null] - A function that takes a url or file path and returns the MIME type of the file.as a string
  * @returns {string} The updated HTML content with script and style tags replaced.
  */

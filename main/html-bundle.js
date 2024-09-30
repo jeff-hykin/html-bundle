@@ -38,14 +38,16 @@ import { version } from "./version.js"
             ${gray.blackBackground`# destructive (overwrites index.html)`}
             ${green.blackBackground`html-bundle`} ${cyan`--inplace`} index.html
 
+            ${gray.blackBackground`# selective bundling`}
+            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleImages `+cyan`false`} index.html
+            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleScripts `+cyan`false`} index.html
+            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleCss `+cyan`false`} index.html
+
             ${gray.blackBackground`# error behavior`}
             ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`warn`}   index.html
             ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`ignore`} index.html
             ${green.blackBackground`html-bundle`} ${magenta`--ifBadPath `+cyan`throw`}  index.html
 
-            ${gray.blackBackground`# select what to bundle`}
-            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleScripts `+cyan`false`} index.html
-            ${green.blackBackground`html-bundle`} ${magenta`--shouldBundleCss `+cyan`false`} index.html
         `)
         Deno.exit(0)
     }
@@ -60,6 +62,7 @@ import { version } from "./version.js"
             [[ 1 ],  ],
             [[ "--inplace", "-i"], flag, ],
             [[ "--ifBadPath", ], initialValue("warn"), ],
+            [[ "--shouldBundleImages", ], initialValue(true), ],
             [[ "--shouldBundleScripts", ], initialValue(true), ],
             [[ "--shouldBundleCss", ], initialValue(true), ],
         ],
@@ -78,7 +81,7 @@ import { version } from "./version.js"
         autoThrow: true,
     })
     
-    const { inplace, shouldBundleScripts, shouldBundleCss, ifBadPath } = output.simplifiedNames
+    const { inplace, shouldBundleImages, shouldBundleScripts, shouldBundleCss, ifBadPath } = output.simplifiedNames
     let source = output.argList[0]
     let destination = output.argList[1]
 // 
@@ -99,6 +102,7 @@ import { version } from "./version.js"
     await fill({
         indexHtmlPath: source,
         newPath: destination,
+        shouldBundleImages,
         shouldBundleScripts,
         shouldBundleCss,
         ifBadPath,

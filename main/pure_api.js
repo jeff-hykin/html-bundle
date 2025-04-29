@@ -4,6 +4,14 @@ import html from "https://github.com/jeff-hykin/common_tree_sitter_languages/raw
 import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts"
 const htmlParser = await parserFromWasm(html)
 
+export function listAllJsPaths(htmlFileContents) {
+    var document = new DOMParser().parseFromString(
+        htmlFileContents,
+        "text/html",
+    )
+    return [...document.querySelectorAll("script")].map(each=>each.getAttribute("src")).filter(each=>each)
+}
+
 /**
  * Injects HTML content into a document by replacing script and style tags with their corresponding file contents.
  *

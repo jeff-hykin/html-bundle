@@ -14,7 +14,7 @@ Install
 # isntall deno
 curl -fsSL https://deno.land/install.sh | sh
 # install html-bundle
-deno install -Afg https://deno.land/x/html_bundle/main/html-bundle.js
+deno install -Afg https://esm.sh/gh/jeff-hykin/html-bundle@0.0.3.0/main/html-bundle.js
 ```
 
 Usage:
